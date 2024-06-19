@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Template to deploy three EC2 instances with Amazon Linux, Windows, and Ubuntu.
+
+Resources:
+  # Security Group for EC2 instances
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties: 
+      GroupDescription: Allow SSH and RDP access
+      SecurityGroupIngress: 
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3389
+          ToPort: 3389
+          CidrIp: 0.0.0.0/0
+
+  # Amazon Linux Instance
+  AmazonLinuxInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      SecurityGroups: 
+        - !Ref InstanceSecurityGroup
+      ImageId: ami-0dc2d3e4c0f9ebd18 # Amazon Linux 2 AMI (HVM)
+
+  # Windows Instance
+  WindowsInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      SecurityGroups: 
+        - !Ref InstanceSecurityGroup
+      ImageId: ami-0c55b159cbfafe1f0 # Windows Server 2019 Base AMI
+
+  # Ubuntu Instance
+  UbuntuInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      SecurityGroups: 
+        - !Ref InstanceSecurityGroup
+      ImageId: ami-0ac019f4fcb7cb7e6 # Ubuntu Server 20.04 LTS AMI
+
+Outputs:
+  AmazonLinuxInstanceId:
+    Description: The Instance ID of the Amazon Linux instance
+    Value: !Ref AmazonLinuxInstance
+  WindowsInstanceId:
+    Description: The Instance ID of the Windows instance
+    Value: !Ref WindowsInstance
+  UbuntuInstanceId:
+    Description: The Instance ID of the Ubuntu instance
+    Value: !Ref UbuntuInstance
