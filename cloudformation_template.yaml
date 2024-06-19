@@ -1,0 +1,115 @@
+
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Stack de CloudFormation para desplegar instancias Amazon Linux 2, Windows Server y Ubuntu.
+
+Parameters:
+  KeyName:
+    Description: Nombre de la llave SSH para acceso a las instancias
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    ConstraintDescription: Debe ser el nombre de una llave SSH existente.
+
+Resources:
+  # Security Group
+  InstanceSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Permitir acceso SSH y RDP
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: '3389'
+          ToPort: '3389'
+          CidrIp: 0.0.0.0/0
+
+  # Amazon Linux 2 Instance
+  LinuxInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: 't2.micro'
+      KeyName: !Ref KeyName
+      SecurityGroups:
+        - !Ref InstanceSecurityGroup
+      ImageId: !Ref LinuxAMI
+
+  # Windows Server Instance
+  WindowsInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: 't2.micro'
+      KeyName: !Ref KeyName
+      SecurityGroups:
+        - !Ref InstanceSecurityGroup
+      ImageId: !Ref WindowsAMI
+
+  # Ubuntu Instance
+  UbuntuInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      InstanceType: 't2.micro'
+      KeyName: !Ref KeyName
+      SecurityGroups:
+        - !Ref InstanceSecurityGroup
+      ImageId: !Ref UbuntuAMI
+
+Mappings:
+  RegionMap:
+    us-east-1:
+      LinuxAMI: 'ami-0e472ba40eb589f49'   # Amazon Linux 2
+      WindowsAMI: 'ami-0b69ea66ff7391e80' # Windows Server 2019
+      UbuntuAMI: 'ami-042e8287309f5df03'  # Ubuntu 20.04 LTS
+    # Agrega otros mapeos de AMIs según las regiones que necesites
+
+Outputs:
+  LinuxInstancePublicIP:
+    Description: IP Pública de la instancia Amazon Linux 2
+    Value: !GetAtt LinuxInstance.PublicIp
+  WindowsInstancePublicIP:
+    Description: IP Pública de la instancia Windows Server
+    Value: !GetAtt WindowsInstance.PublicIp
+  UbuntuInstancePublicIP:
+    Description: IP Pública de la instancia Ubuntu
+    Value: !GetAtt UbuntuInstance.PublicIp
+
+Conditions:
+  IsUSEast1: !Equals [!Ref "AWS::Region", "us-east-1"]
+
+Resources:
+  LinuxInstance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      InstanceType: "t2.micro"
+      KeyName: !Ref KeyName
+      SecurityGroupIds:
+        - !Ref InstanceSecurityGroup
+      ImageId:
+        !FindInMap
+          - RegionMap
+          - !Ref "AWS::Region"
+          - LinuxAMI
+  WindowsInstance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      InstanceType: "t2.micro"
+      KeyName: !Ref KeyName
+      SecurityGroupIds:
+        - !Ref InstanceSecurityGroup
+      ImageId:
+        !FindInMap
+          - RegionMap
+          - !Ref "AWS::Region"
+          - WindowsAMI
+  UbuntuInstance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      InstanceType: "t2.micro"
+      KeyName: !Ref KeyName
+      SecurityGroupIds:
+        - !Ref InstanceSecurityGroup
+      ImageId:
+        !FindInMap
+          - RegionMap
+          - !Ref "AWS::Region"
+          - UbuntuAMI
