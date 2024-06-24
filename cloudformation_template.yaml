@@ -60,14 +60,3 @@ Resources:
         - !GetAtt InstanceSecurityGroup.GroupId
       SubnetId: !Ref SubnetId
       ImageId: 'ami-042e8287309f5df03'  # Ubuntu 20.04 LTS
-
-Outputs:
-  LinuxInstancePublicIP:
-    Description: IP Pública de la instancia Amazon Linux 2
-    Value: !GetAtt LinuxInstance.PublicIpAddress
-  WindowsInstancePublicIP:
-    Description: IP Pública de la instancia Windows Server
-    Value: !GetAtt WindowsInstance.PublicIpAddress
-  UbuntuInstancePublicIP:
-    Description: IP Pública de la instancia Ubuntu
-    Value: !GetAtt UbuntuInstance.PublicIpAddress
