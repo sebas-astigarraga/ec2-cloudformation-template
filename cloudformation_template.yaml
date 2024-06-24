@@ -40,6 +40,9 @@ Resources:
         - !GetAtt InstanceSecurityGroup.GroupId
       SubnetId: !Ref SubnetId
       ImageId: 'ami-0e472ba40eb589f49'  # Amazon Linux 2
+      Tags:
+        - Key: Name
+          Value: LinuxInstance
 
   WindowsInstance:
     Type: 'AWS::EC2::Instance'
@@ -50,6 +53,9 @@ Resources:
         - !GetAtt InstanceSecurityGroup.GroupId
       SubnetId: !Ref SubnetId
       ImageId: 'ami-0b69ea66ff7391e80'  # Windows Server 2019
+      Tags:
+        - Key: Name
+          Value: WindowsInstance
 
   UbuntuInstance:
     Type: 'AWS::EC2::Instance'
@@ -60,3 +66,6 @@ Resources:
         - !GetAtt InstanceSecurityGroup.GroupId
       SubnetId: !Ref SubnetId
       ImageId: 'ami-042e8287309f5df03'  # Ubuntu 20.04 LTS
+      Tags:
+        - Key: Name
+          Value: UbuntuInstance
