@@ -64,10 +64,10 @@ Resources:
 Outputs:
   LinuxInstancePublicIP:
     Description: IP Pública de la instancia Amazon Linux 2
-    Value: !GetAtt LinuxInstance.PublicIp
+    Value: !GetAtt LinuxInstance.PublicIpAddress
   WindowsInstancePublicIP:
     Description: IP Pública de la instancia Windows Server
-    Value: !GetAtt WindowsInstance.PublicIp
+    Value: !GetAtt WindowsInstance.PublicIpAddress
   UbuntuInstancePublicIP:
     Description: IP Pública de la instancia Ubuntu
-    Value: !GetAtt UbuntuInstance.PublicIp
+    Value: !GetAtt UbuntuInstance.PublicIpAddress
