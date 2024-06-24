@@ -10,6 +10,10 @@ Parameters:
     Description: ID de la VPC donde se desplegarán los recursos
     Type: 'AWS::EC2::VPC::Id'
     ConstraintDescription: Debe ser un ID de VPC válido.
+  SubnetId:
+    Description: ID de la subred donde se desplegarán las instancias
+    Type: 'AWS::EC2::Subnet::Id'
+    ConstraintDescription: Debe ser un ID de subred válido en la VPC especificada.
 
 Resources:
   InstanceSecurityGroup:
@@ -34,7 +38,7 @@ Resources:
       KeyName: !Ref KeyName
       SecurityGroupIds:
         - !GetAtt InstanceSecurityGroup.GroupId
-      SubnetId: !Select [0, !GetAZs ]
+      SubnetId: !Ref SubnetId
       ImageId: 'ami-0e472ba40eb589f49'  # Amazon Linux 2
 
   WindowsInstance:
@@ -44,7 +48,7 @@ Resources:
       KeyName: !Ref KeyName
       SecurityGroupIds:
         - !GetAtt InstanceSecurityGroup.GroupId
-      SubnetId: !Select [0, !GetAZs ]
+      SubnetId: !Ref SubnetId
       ImageId: 'ami-0b69ea66ff7391e80'  # Windows Server 2019
 
   UbuntuInstance:
@@ -54,7 +58,7 @@ Resources:
       KeyName: !Ref KeyName
       SecurityGroupIds:
         - !GetAtt InstanceSecurityGroup.GroupId
-      SubnetId: !Select [0, !GetAZs ]
+      SubnetId: !Ref SubnetId
       ImageId: 'ami-042e8287309f5df03'  # Ubuntu 20.04 LTS
 
 Outputs:
