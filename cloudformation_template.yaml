@@ -6,12 +6,17 @@ Parameters:
     Description: Nombre de la llave SSH para acceso a las instancias
     Type: 'AWS::EC2::KeyPair::KeyName'
     ConstraintDescription: Debe ser el nombre de una llave SSH existente.
+  VpcId:
+    Description: ID de la VPC donde se desplegarán los recursos
+    Type: 'AWS::EC2::VPC::Id'
+    ConstraintDescription: Debe ser un ID de VPC válido.
 
 Resources:
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: Permitir acceso SSH y RDP
+      VpcId: !Ref VpcId
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: '22'
@@ -27,8 +32,9 @@ Resources:
     Properties:
       InstanceType: 't2.micro'
       KeyName: !Ref KeyName
-      SecurityGroups:
-        - !Ref InstanceSecurityGroup
+      SecurityGroupIds:
+        - !GetAtt InstanceSecurityGroup.GroupId
+      SubnetId: !Select [0, !GetAZs ]
       ImageId: 'ami-0e472ba40eb589f49'  # Amazon Linux 2
 
   WindowsInstance:
@@ -36,8 +42,9 @@ Resources:
     Properties:
       InstanceType: 't2.micro'
       KeyName: !Ref KeyName
-      SecurityGroups:
-        - !Ref InstanceSecurityGroup
+      SecurityGroupIds:
+        - !GetAtt InstanceSecurityGroup.GroupId
+      SubnetId: !Select [0, !GetAZs ]
       ImageId: 'ami-0b69ea66ff7391e80'  # Windows Server 2019
 
   UbuntuInstance:
@@ -45,8 +52,9 @@ Resources:
     Properties:
       InstanceType: 't2.micro'
       KeyName: !Ref KeyName
-      SecurityGroups:
-        - !Ref InstanceSecurityGroup
+      SecurityGroupIds:
+        - !GetAtt InstanceSecurityGroup.GroupId
+      SubnetId: !Select [0, !GetAZs ]
       ImageId: 'ami-042e8287309f5df03'  # Ubuntu 20.04 LTS
 
 Outputs:
