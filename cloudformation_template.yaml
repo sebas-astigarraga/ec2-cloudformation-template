@@ -36,11 +36,13 @@ Resources:
     Properties:
       InstanceType: 't2.micro'
       KeyName: !Ref KeyName
-      SecurityGroupIds:
-        - !GetAtt InstanceSecurityGroup.GroupId
-      SubnetId: !Ref SubnetId
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          SubnetId: !Ref SubnetId
+          GroupSet:
+            - !GetAtt InstanceSecurityGroup.GroupId
       ImageId: 'ami-01b799c439fd5516a'  # Amazon Linux 2023
-      AssociatePublicIpAddress: true
       Tags:
         - Key: Name
           Value: LinuxInstance
@@ -50,11 +52,13 @@ Resources:
     Properties:
       InstanceType: 't2.micro'
       KeyName: !Ref KeyName
-      SecurityGroupIds:
-        - !GetAtt InstanceSecurityGroup.GroupId
-      SubnetId: !Ref SubnetId
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          SubnetId: !Ref SubnetId
+          GroupSet:
+            - !GetAtt InstanceSecurityGroup.GroupId
       ImageId: 'ami-04df9ee4d3dfde202'  # Windows Server 2022
-      AssociatePublicIpAddress: true
       Tags:
         - Key: Name
           Value: WindowsInstance
@@ -64,11 +68,13 @@ Resources:
     Properties:
       InstanceType: 't2.micro'
       KeyName: !Ref KeyName
-      SecurityGroupIds:
-        - !GetAtt InstanceSecurityGroup.GroupId
-      SubnetId: !Ref SubnetId
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          SubnetId: !Ref SubnetId
+          GroupSet:
+            - !GetAtt InstanceSecurityGroup.GroupId
       ImageId: 'ami-04b70fa74e45c3917'  # Ubuntu 24.04 LTS
-      AssociatePublicIpAddress: true
       Tags:
         - Key: Name
           Value: UbuntuInstance
