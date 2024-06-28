@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Stack de CloudFormation para desplegar instancias Amazon Linux 2, Windows Server y Ubuntu con SSM Agent activo.
+Description: Stack de CloudFormation para desplegar instancias Amazon Linux 2, Windows Server y Ubuntu con SSM Agent activo y permisos específicos para CloudWatch y SSM.
 
 Parameters:
   KeyName:
@@ -16,6 +16,32 @@ Parameters:
     ConstraintDescription: Debe ser un ID de subred válido en la VPC especificada.
 
 Resources:
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "SSMCloudWatchInstanceRole"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:${AWS::Partition}:iam::aws:policy/CloudWatchAgentServerPolicy
+        - arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: "SSMCloudWatchInstanceProfile"
+      Path: "/"
+      Roles:
+        - !Ref InstanceRole
+
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -30,46 +56,6 @@ Resources:
           FromPort: '3389'
           ToPort: '3389'
           CidrIp: 0.0.0.0/0
-
-  SSMRole:
-    Type: 'AWS::IAM::Role'
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: ec2.amazonaws.com
-            Action: sts:AssumeRole
-      Path: /
-      Policies:
-        - PolicyName: SSMPolicy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - 'ssm:DescribeInstanceInformation'
-                  - 'ssm:GetCommandInvocation'
-                  - 'ssm:ListInstanceAssociations'
-                  - 'ssm:PutInventory'
-                  - 'ssm:UpdateInstanceInformation'
-                Resource: '*'
-              - Effect: Allow
-                Action:
-                  - 'ec2messages:AcknowledgeMessage'
-                  - 'ec2messages:DeleteMessage'
-                  - 'ec2messages:FailMessage'
-                  - 'ec2messages:GetEndpoint'
-                  - 'ec2messages:GetMessages'
-                  - 'ec2messages:SendReply'
-                Resource: '*'
-
-  InstanceProfile:
-    Type: 'AWS::IAM::InstanceProfile'
-    Properties:
-      Roles:
-        - !Ref SSMRole
 
   LinuxInstance:
     Type: 'AWS::EC2::Instance'
