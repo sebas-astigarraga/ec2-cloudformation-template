@@ -98,7 +98,7 @@ Resources:
       InstanceProfileName: "SSMCloudWatchInstanceProfile"
       Path: "/"
       Roles:
-        - !Ref InstanceRole
+        - !Ref InstanceEC2Role
 
   InstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
